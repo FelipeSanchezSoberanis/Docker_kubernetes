@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: postgres-product-service-deployment
+  labels:
+    app: example-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: example-app
+  template:
+    metadata:
+      labels:
+        app: example-app
+    spec:
+      containers:
+        - name: postgres-product-service
+          image: felipesanchezsoberanis/postgres-product-service:latest
+          ports:
+            - containerPort: 5432
+          env:
+            - name: POSTGRES_PASSWORD
+              value: password
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgres-product-service-service
+spec:
+  selector:
+    app: example-app
+  type: LoadBalancer
+  ports:
+    - protocol: TCP
+      nodePort: 30000
+      port: 5432
